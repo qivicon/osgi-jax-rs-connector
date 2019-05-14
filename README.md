@@ -1,5 +1,5 @@
-# OSGi - JAX-RS Connector 4.3
-[![Build Status](https://travis-ci.org/hstaudacher/osgi-jax-rs-connector.png)](https://travis-ci.org/hstaudacher/osgi-jax-rs-connector) [![Maven Status](https://maven-badges.herokuapp.com/maven-central/com.eclipsesource.jaxrs/publisher/badge.png)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.eclipsesource.jaxrs%22)
+# OSGi - JAX-RS Connector 5.3.1
+[![Build Status](https://travis-ci.org/hstaudacher/osgi-jax-rs-connector.png)](https://travis-ci.org/hstaudacher/osgi-jax-rs-connector) [![Maven Status](https://maven-badges.herokuapp.com/maven-central/com.eclipsesource.jaxrs/publisher/badge.png)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.eclipsesource.jaxrs%22) [![License](http://img.shields.io/badge/license-EPL-blue.svg)](http://www.eclipse.org/legal/epl-v10.html) [![Gitter](http://img.shields.io/badge/Gitter-join-yellow.svg)](https://gitter.im/hstaudacher/osgi-jax-rs-connector?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ![](http://download.eclipsesource.com/~hstaudacher/connector.png)
 
@@ -10,7 +10,7 @@ This project connects Jersey and OSGi at the *service level*. This means that OS
 RESTful web services by simply registering them as OSGi services. A neat side feature is that REST services can also be consumed as OSGi services ;).  
 
 *To see how to get started with JAX-RS 2.0 and Jersey please read the [Jersey getting started guide](https://jersey.java.net/documentation/latest/getting-started.html).*
-
+mox
 ## Features
 The OSGi-JAX-RS Connector provides **two main bundles**. A **publisher** and a **consumer**. Both can be used completely separately or together, it's up to you. Additional the connector provides custom `@Provider` and `Feature` implementations that can be used optionally.
 
@@ -20,7 +20,6 @@ The publisher is located in the bundle `com.eclipsesource.jaxrs.publisher`. All 
 By default the publisher registers the services using the context path `/services`. This means an OSGi service that is annotated with `@Path( "/foo" )` will be available using the path `/services/foo`. This context path is configurable using the OSGi configuration admin. You can configure the service using the service.pid `com.eclipsesource.jaxrs.connector` with the following properties:
 
 * `root` : defines a custom root path. Default is `/services`.
-* `disableWadl` ***deprecated*** : disables the wadl generation. Default is `false`.
 * `publishDelay` : the time in ms to wait after a resource was registered before its going to be published. Default is `150`.
 
 Besides the config admin you can [configure the JAX-RS Application with properties](https://jersey.java.net/documentation/latest/appendix-properties.html) too. Simply register a service implementing the [ApplicationConfiguration](https://github.com/hstaudacher/osgi-jax-rs-connector/blob/master/bundles/com.eclipsesource.jaxrs.publisher/src/com/eclipsesource/jaxrs/publisher/ApplicationConfiguration.java) interface. It will be called before the Application got published.
@@ -40,11 +39,13 @@ A detailed explanation of the concepts of the consumer together with some exampl
 
 ### Providers
 The custom `@Provider` and `Feature` implementations are located in their own features. The following features are currently included.
-* `com.eclipsesource.jaxrs.provider.moxy` - Allows the de/serialization using [EclipseLink MOXy](http://www.eclipse.org/eclipselink/moxy.php).  
+* `com.eclipsesource.jaxrs.provider.moxy` - Allows the de/serialization using [EclipseLink MOXy](https://www.eclipse.org/eclipselink/#moxy).  
 * `com.eclipsesource.jaxrs.provider.gson` - Allows the de/serialization using [Gson](https://code.google.com/p/google-gson/).  
 * `com.eclipsesource.jaxrs.provider.security` - Provides an OSGi friendly integration of Jersey's/JAX-RS security features. [Read the wiki for more information](https://github.com/hstaudacher/osgi-jax-rs-connector/wiki/security).
 * `com.eclipsesource.jaxrs.provider.sse` - Provides an integration of Jersey's [SSE feature](https://jersey.java.net/documentation/latest/sse.html) *(requires javax.servlet 3.x)*.
 * `com.eclipsesource.jaxrs.provider.multipart` - Provides an integration of Jersey's [Multipart feature](https://jersey.java.net/documentation/latest/media.html#multipart).
+* `com.eclipsesource.jaxrs.provider.swagger` - Provides an integration of [Swagger](http://swagger.io/). See the [swagger wiki page](https://github.com/hstaudacher/osgi-jax-rs-connector/wiki/Swagger-Integration) for more details.
+
 
 ## Installation
 To ease the installation we provide a p2 repository and we publish the connector to maven central.
@@ -87,7 +88,7 @@ Besides these basic example two example exist that are shwoing how the [security
 The example for the consumer is splitted into two bundles called `com.eclipsesource.jaxrs.consumer.example` and `com.eclipsesource.jaxrs.consumer.example.caller`. The example bundle contains the data model and the resource interface while the caller just calls the service. The example fetches data from github and is pretty simple.
 
 ### Apache Karaf Integration
-If you want to deploy the connector into [Apache Karaf](http://karaf.apache.org/) take a look at the [karaf-integration example](https://github.com/hstaudacher/osgi-jax-rs-connector/tree/master/examples/karaf-integration). To get tarted read the step-by-step guide in the [README](https://github.com/hstaudacher/osgi-jax-rs-connector/tree/master/examples/karaf-integration/README.md).
+If you want to deploy the connector into [Apache Karaf](http://karaf.apache.org/) take a look at the [karaf-integration example](https://github.com/hstaudacher/osgi-jax-rs-connector/tree/master/examples/karaf-integration). To get started read the step-by-step guide in the [README](https://github.com/hstaudacher/osgi-jax-rs-connector/tree/master/examples/karaf-integration/README.md).
 
 ### Starter Kit
 If you are working with [Bndtools](http://bndtools.org), a [Starter Kit](https://github.com/BryanHunt/bndtools-equinox-app-kit) is available to help you get going.  You will most likely want either the [rest](https://github.com/BryanHunt/bndtools-equinox-app-kit/tree/rest) or [mongo-rest](https://github.com/BryanHunt/bndtools-equinox-app-kit/tree/mongo-rest) branch.
@@ -95,11 +96,10 @@ If you are working with [Bndtools](http://bndtools.org), a [Starter Kit](https:/
 ## Requirements
 * OSGi Core Specification R4 and an OSGi HttpService implementation (e.g. Equinox, Felix).
 * JRE 1.7 (same as Jersey 2.6+)
-* *If you want to use the SSE provider you need javax.servlet
-API 3.x*
+* *If you want to use the SSE provider you need javax.servlet API 3.x*
 
 ## Jersey version
-With Jersey 2.0 the library was splitted into several modules with a whole bunch of dependencies. To ease the OSGi application development Jersey was rebundled in this project and ships as a single bundle called `com.eclipsesource.jaxrs.jersey.all`. Currently it includes Jersey 2.17 and it's dependencies. Also the Eclipse Source Bundle will be shipped to make the Jersey API more discoverable when using Eclipse.
+With Jersey 2.0 the library was splitted into several modules with a whole bunch of dependencies. To ease the OSGi application development Jersey was rebundled in this project and ships as a single bundle called `com.eclipsesource.jaxrs.jersey.all`. Currently it includes Jersey 2.22.2 and it's dependencies. Also the Eclipse Source Bundle will be shipped to make the Jersey API more discoverable when using Eclipse. Anyway, it's up to you to use this 'all' bundle or to fetch the single Jersey bundles yourself. The connector just imports packages.
 
 ## Changelog
 Checkout the [github releases](https://github.com/hstaudacher/osgi-jax-rs-connector/releases).
@@ -107,4 +107,6 @@ Checkout the [github releases](https://github.com/hstaudacher/osgi-jax-rs-connec
 ## License
 The code is published under the terms of the [Eclipse Public License, version 1.0](http://www.eclipse.org/legal/epl-v10.html).
 
-Included binaries from [Jersey](http://jersey.java.net/) (rebundled), version 2.17, which are published under two licenses, the [CDDL 1.1 and GPL 2 with CPE](http://glassfish.java.net/public/CDDL+GPL_1_1.html)
+Included binaries from [Jersey](http://jersey.java.net/) (rebundled), version 2.22.2, which are published under two licenses, the [CDDL 1.1 and GPL 2 with CPE](http://glassfish.java.net/public/CDDL+GPL_1_1.html).
+
+Included binaries from [Swagger](http://swagger.io/) (rebundled), version 1.5.7, which are published under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).

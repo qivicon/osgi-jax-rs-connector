@@ -19,12 +19,11 @@
 	  <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kar-packager-version>0.6.0</kar-packager-version>
-		<tycho-version>0.20.0</tycho-version>
-		<tycho-extras-version>0.20.0</tycho-extras-version>
+		<tycho-version>0.24.0</tycho-version>
+		<tycho-extras-version>0.24.0</tycho-extras-version>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
-		<surefire-version>2.16</surefire-version>
-		<findbugs-version>2.5.2</findbugs-version>
+		<surefire-version>2.18</surefire-version>
+		<findbugs-version>2.5.5</findbugs-version>
 		<junit-version>4.11</junit-version>
 		<mockito-version>1.9.5</mockito-version>
 		<jacocoagent>${basedir}/../../build/com.eclipsesource.jaxrs.build/lib/jacocoagent.jar</jacocoagent>
@@ -42,6 +41,7 @@
 		<module>../../bundles/com.eclipsesource.jaxrs.provider.security</module>
 		<module>../../bundles/com.eclipsesource.jaxrs.provider.sse</module>
 		<module>../../bundles/com.eclipsesource.jaxrs.provider.multipart</module>
+		<module>../../bundles/com.eclipsesource.jaxrs.provider.swagger</module>
 		<!-- Tests -->
 		<module>../../tests/com.eclipsesource.jaxrs.publisher.test</module>
 		<module>../../tests/com.eclipsesource.jaxrs.consumer.test</module>
@@ -49,6 +49,7 @@
 		<module>../../tests/com.eclipsesource.jaxrs.provider.security.test</module>
 		<module>../../tests/com.eclipsesource.jaxrs.provider.sse.test</module>
 		<module>../../tests/com.eclipsesource.jaxrs.provider.multipart.test</module>
+		<module>../../tests/com.eclipsesource.jaxrs.provider.swagger.test</module>
 		<!-- Features -->
 		<module>../com.eclipsesource.jaxrs.jersey.runtime.feature</module>
 		<module>../com.eclipsesource.jaxrs.connector.feature</module>
@@ -57,6 +58,7 @@
 		<module>../com.eclipsesource.jaxrs.provider.security.feature</module>
 		<module>../com.eclipsesource.jaxrs.provider.sse.feature</module>
 		<module>../com.eclipsesource.jaxrs.provider.multipart.feature</module>
+		<module>../com.eclipsesource.jaxrs.provider.swagger.feature</module>
 		<!-- Repository -->
 		<module>../com.eclipsesource.jaxrs.repository</module>
 	</modules>
@@ -113,7 +115,7 @@
 							<groupId>${project.groupId}</groupId>
 							<artifactId>${project.artifactId}</artifactId>
 							<version>${project.version}</version>
-							<classifier>${project.parent.relativePath}/../com.eclipsesource.jaxrs.connector.target/Equinox-3.6-jersey2.17</classifier>
+							<classifier>${project.parent.relativePath}/../com.eclipsesource.jaxrs.connector.target/Equinox-3.6-jersey2.22</classifier>
 						</artifact>
 					</target>
 					<environments>
