@@ -23,7 +23,7 @@
 		<tycho-extras-version>0.24.0</tycho-extras-version>
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
 		<surefire-version>2.18</surefire-version>
-		<findbugs-version>2.5.5</findbugs-version>
+		<findbugs-version>3.0.5</findbugs-version>
 		<junit-version>4.11</junit-version>
 		<mockito-version>1.9.5</mockito-version>
 		<jacocoagent>${basedir}/../../build/com.eclipsesource.jaxrs.build/lib/jacocoagent.jar</jacocoagent>

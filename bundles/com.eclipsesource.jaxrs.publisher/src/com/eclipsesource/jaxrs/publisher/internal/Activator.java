@@ -1,14 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2012,2015 EclipseSource and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2012,2015 EclipseSource and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Holger Staudacher - initial API and implementation
- *    ProSyst Software GmbH. - compatibility with OSGi specification 4.2 APIs
- *    Ivan Iliev - added ServletConfigurationTracker
+ * http://www.eclipse.org/legal/epl-v10.html Contributors: Holger Staudacher - initial API and
+ * implementation ProSyst Software GmbH. - compatibility with OSGi specification 4.2 APIs Ivan Iliev
+ * - added ServletConfigurationTracker
  ******************************************************************************/
 package com.eclipsesource.jaxrs.publisher.internal;
 
@@ -30,7 +26,6 @@ import org.osgi.service.cm.ManagedService;
 
 import com.eclipsesource.jaxrs.publisher.ResourceFilter;
 
-
 public class Activator implements BundleActivator {
 
   private ServiceRegistration connectorRegistration;
@@ -43,12 +38,13 @@ public class Activator implements BundleActivator {
 
   @Override
   public void start( BundleContext context ) throws Exception {
-    System.setProperty( "javax.ws.rs.ext.RuntimeDelegate", 
+    System.setProperty( "javax.ws.rs.ext.RuntimeDelegate",
                         "org.glassfish.jersey.server.internal.RuntimeDelegateImpl" );
     startJerseyServer();
     jaxRsConnector = new JAXRSConnector( context );
     registerConfiguration( context );
-    connectorRegistration = context.registerService( JAXRSConnector.class.getName(), jaxRsConnector, null );
+    connectorRegistration = context
+      .registerService( JAXRSConnector.class.getName(), jaxRsConnector, null );
     openHttpServiceTracker( context );
     openServletConfigurationTracker( context );
     openApplicationConfigurationTracker( context );
@@ -79,12 +75,13 @@ public class Activator implements BundleActivator {
     servletConfigurationTracker = new ServletConfigurationTracker( context, jaxRsConnector );
     servletConfigurationTracker.open();
   }
-  
+
   private void openApplicationConfigurationTracker( BundleContext context ) {
-    applicationConfigurationTracker = new ApplicationConfigurationTracker( context, jaxRsConnector );
+    applicationConfigurationTracker = new ApplicationConfigurationTracker( context,
+                                                                           jaxRsConnector );
     applicationConfigurationTracker.open();
   }
-  
+
   private void openAllServiceTracker( BundleContext context ) throws InvalidSyntaxException {
     ResourceFilter allResourceFilter = getResourceFilter( context );
     allTracker = new ResourceTracker( context, allResourceFilter.getFilter(), jaxRsConnector );
@@ -92,9 +89,18 @@ public class Activator implements BundleActivator {
   }
 
   private ResourceFilter getResourceFilter( BundleContext context ) {
-    ServiceReference filterReference = context.getServiceReference( ResourceFilter.class.getName() );
+    ServiceReference filterReference = context
+      .getServiceReference( ResourceFilter.class.getName() );
     if( filterReference != null ) {
       return ( ResourceFilter )context.getService( filterReference );
+    }
+    String filterString = System.getProperty( "com.eclipsesource.jaxrs.publisher.ResourceFilter" );
+    if( filterString != null ) {
+      try {
+        return new ResourceFilterImpl( filterString );
+      } catch( InvalidSyntaxException e ) {
+        // ignore here
+      }
     }
     return new AllResourceFilter( context );
   }
