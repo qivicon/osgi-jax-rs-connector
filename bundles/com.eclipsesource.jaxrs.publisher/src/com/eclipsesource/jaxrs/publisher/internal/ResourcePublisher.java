@@ -12,9 +12,9 @@
 package com.eclipsesource.jaxrs.publisher.internal;
 
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -24,7 +24,7 @@ public class ResourcePublisher {
   private final ServletContainerBridge servletContainerBridge;
   private final ScheduledExecutorService executor;
   private long publishDelay;
-  private volatile ScheduledFuture<?> scheduledFuture;
+  private ScheduledFuture<?> scheduledFuture;
 
   public ResourcePublisher( ServletContainerBridge servletContainerBridge, long publishDelay ) {
     this( createExecutor(), servletContainerBridge, publishDelay );
@@ -40,7 +40,7 @@ public class ResourcePublisher {
   }
 
   private static ScheduledExecutorService createExecutor() {
-    return Executors.newSingleThreadScheduledExecutor( new ThreadFactory() {
+    ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor( 1, new ThreadFactory() {
 
       @Override
       public Thread newThread( Runnable runnable ) {
@@ -54,25 +54,29 @@ public class ResourcePublisher {
         } );
         return thread;
       }
+      
     } );
+    executor.setRemoveOnCancelPolicy( true );
+    return executor;
   }
 
   public void setPublishDelay( long publishDelay ) {
     this.publishDelay = publishDelay;
   }
 
-  public void schedulePublishing() {
+  public synchronized void schedulePublishing() {
     if( scheduledFuture != null ) {
       scheduledFuture.cancel( false );
     }
-    scheduledFuture = executor.schedule( servletContainerBridge, publishDelay, TimeUnit.MILLISECONDS );
+    scheduledFuture = executor
+      .schedule( servletContainerBridge, publishDelay, TimeUnit.MILLISECONDS );
   }
 
   public void shutdown() {
     executor.shutdown();
   }
 
-  public void cancelPublishing() {
+  public synchronized void cancelPublishing() {
     if( scheduledFuture != null ) {
       scheduledFuture.cancel( true );
     }
