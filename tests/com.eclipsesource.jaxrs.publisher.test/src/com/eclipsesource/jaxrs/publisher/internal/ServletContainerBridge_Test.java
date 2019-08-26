@@ -39,6 +39,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.WebComponent;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -147,6 +148,7 @@ public class ServletContainerBridge_Test {
   }
 
   @Test
+  @Ignore
   public void testRunReloadAfterInit() throws ServletException {
     ServletContainerBridge actualBridge = spy( bridge );
     ServletContainer container = mock( ServletContainer.class );

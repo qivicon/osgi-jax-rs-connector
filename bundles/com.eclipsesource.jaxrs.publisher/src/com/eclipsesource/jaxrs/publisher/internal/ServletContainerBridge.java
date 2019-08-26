@@ -1,13 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2014,2015 EclipseSource and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * Copyright (c) 2014,2015 EclipseSource and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *    Holger Staudacher - initial API and implementation
- *    Ivan Iliev - Performance Optimizations
+ * http://www.eclipse.org/legal/epl-v10.html Contributors: Holger Staudacher - initial API and
+ * implementation Ivan Iliev - Performance Optimizations
  ******************************************************************************/
 package com.eclipsesource.jaxrs.publisher.internal;
 
@@ -19,11 +15,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Request;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
-
+import org.omg.CORBA.Request;
 
 public class ServletContainerBridge extends HttpServlet implements Runnable {
 
@@ -49,10 +44,14 @@ public class ServletContainerBridge extends HttpServlet implements Runnable {
           // No WebComponent present, initialize Jersey so it's created
           if( getServletContainer().getWebComponent() == null ) {
             getServletContainer().init( servletConfig );
-          } 
+          }
           // We already have a WebComponent we need to reload it
           else {
-            getServletContainer().reload( ResourceConfig.forApplication( application ) );
+            getServletContainer().destroy();
+            // create a new ServletContainer when the old one is destroyed.
+            this.servletContainer = new ServletContainer( ResourceConfig
+              .forApplication( application ) );
+            getServletContainer().init( servletConfig );
           }
           isJerseyReady = true;
         }
@@ -72,12 +71,15 @@ public class ServletContainerBridge extends HttpServlet implements Runnable {
   }
 
   @Override
-  public void service( ServletRequest req, ServletResponse res ) throws ServletException, IOException {
+  public void service( ServletRequest req, ServletResponse res )
+    throws ServletException, IOException
+  {
     // if jersey has not yet been initialized return service unavailable
     if( isJerseyReady() ) {
       getServletContainer().service( req, res );
     } else {
-      ( ( HttpServletResponse )res ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE, "Jersey is not ready yet!" );
+      ( ( HttpServletResponse )res ).sendError( HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                                                "Jersey is not ready yet!" );
     }
   }
 
@@ -88,7 +90,8 @@ public class ServletContainerBridge extends HttpServlet implements Runnable {
         this.isJerseyReady = false;
         getServletContainer().destroy();
         // create a new ServletContainer when the old one is destroyed.
-        this.servletContainer = new ServletContainer( ResourceConfig.forApplication( application ) );
+        this.servletContainer = new ServletContainer( ResourceConfig
+          .forApplication( application ) );
       }
     }
   }
@@ -97,8 +100,8 @@ public class ServletContainerBridge extends HttpServlet implements Runnable {
   ServletContainer getServletContainer() {
     return servletContainer;
   }
-  
-  void setJerseyReady(boolean isJerseyReady) {
+
+  void setJerseyReady( boolean isJerseyReady ) {
     this.isJerseyReady = isJerseyReady;
   }
 
