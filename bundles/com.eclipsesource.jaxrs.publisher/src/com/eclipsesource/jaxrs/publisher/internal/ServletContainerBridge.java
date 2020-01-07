@@ -12,6 +12,8 @@
 package com.eclipsesource.jaxrs.publisher.internal;
 
 import java.io.IOException;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -23,10 +25,13 @@ import javax.ws.rs.core.Request;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 
 public class ServletContainerBridge extends HttpServlet implements Runnable {
 
+  private final BundleContext bundleContext;
   private final RootApplication application;
   private ServletContainer servletContainer;
   private ServletConfig servletConfig;
@@ -34,6 +39,7 @@ public class ServletContainerBridge extends HttpServlet implements Runnable {
 
   public ServletContainerBridge( RootApplication application ) {
     this.servletContainer = new ServletContainer( ResourceConfig.forApplication( application ) );
+    this.bundleContext = FrameworkUtil.getBundle( getClass() ).getBundleContext();
     this.application = application;
     this.isJerseyReady = false;
   }
@@ -59,6 +65,12 @@ public class ServletContainerBridge extends HttpServlet implements Runnable {
             getServletContainer().init( servletConfig );
           }
           isJerseyReady = true;
+          final Dictionary<String, Object> properties = new Hashtable<>();
+          properties.put( "jersey.ready", isJerseyReady );
+          
+          // register a service denoting that jersey is ready
+          // no need to deregister as it will be done automatically when the bundle gets stopped.
+          bundleContext.registerService( Object.class.getName(), new Object(), properties );
         }
       } catch( Throwable e ) {
         e.printStackTrace();
